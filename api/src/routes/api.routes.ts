@@ -1,5 +1,7 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import * as db from '../database/queries.js';
+import * as mcpFunctions from '../services/mcp-functions.js';
+import * as aiService from '../services/ai.service.js';
 
 const api = express.Router();
 
@@ -7,10 +9,80 @@ api.get('/test', (req, res) => {
   res.send('API is working properly');
 });
 
-// Note: Read operations (get users, search) are handled by MCP server
-// This API focuses on write operations and authentication
+api.post('/match', async (req, res) => {
+  try {
+    const { query, userName, useAI = true } = req.body;
 
-// Update user - Modify user/village information
+    if (!query) {
+      res.status(400).json({ error: 'Query is required' });
+      return;
+    }
+
+    let matchResults;
+    let aiInterpretation;
+    let aiRecommendation;
+
+    if (useAI) {
+      aiInterpretation = await aiService.interpretQuery({
+        query,
+        userName
+      });
+
+      matchResults = await mcpFunctions.matchUserNeed({
+        userName,
+        need: query,
+        keywords: aiInterpretation.keywords,
+        location: aiInterpretation.location
+      });
+
+      if (matchResults.matches.length > 0) {
+        aiRecommendation = await aiService.generateMatchRecommendations(
+          query,
+          matchResults.matches
+        );
+      }
+    } else {
+      matchResults = await mcpFunctions.matchUserNeed({
+        userName,
+        need: query
+      });
+    }
+
+    res.status(200).json({
+      query,
+      userName: userName || 'Anonymous',
+      interpretation: aiInterpretation?.interpretation,
+      aiRecommendation,
+      matchCount: matchResults.matches.length,
+      matches: matchResults.matches,
+      requestingUser: matchResults.requestingUser
+    });
+  } catch (err) {
+    console.error('Match error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+api.get('/search/location/:location', async (req, res) => {
+  try {
+    const users = await mcpFunctions.searchUsersByLocation(req.params.location);
+    res.status(200).json({ count: users.length, users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+api.get('/search/skill/:keyword', async (req, res) => {
+  try {
+    const users = await mcpFunctions.searchUsersByFact(req.params.keyword);
+    res.status(200).json({ count: users.length, users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 api.put('/users/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -26,7 +98,6 @@ api.put('/users/:id', async (req, res) => {
   }
 });
 
-// Delete user - Remove user/village from network
 api.delete('/users/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);

@@ -36,7 +36,6 @@ async function login(req: Request, res: Response) {
       return res.status(401).send('User not found');
     }
 
-    // Create JWT token with user info
     jwt.sign(
       { userInfo },
       process.env.SECRET_KEY,
