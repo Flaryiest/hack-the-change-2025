@@ -13,8 +13,7 @@ async function signUp(data: Prisma.UserCreateInput) {
 async function getUserInfo(name: string) {
   try {
     return await prisma.user.findUnique({
-      where: { name },
-
+      where: { name }
     });
   } catch (err) {
     console.log(err);
@@ -22,4 +21,36 @@ async function getUserInfo(name: string) {
   }
 }
 
-export { signUp, getUserInfo };
+async function getAllUsers() {
+  try {
+    return await prisma.user.findMany();
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+async function updateUser(id: number, data: Prisma.UserUpdateInput) {
+  try {
+    return await prisma.user.update({
+      where: { id },
+      data
+    });
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+async function deleteUser(id: number) {
+  try {
+    return await prisma.user.delete({
+      where: { id }
+    });
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+export { signUp, getUserInfo, getAllUsers, updateUser, deleteUser };
