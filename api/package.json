@@ -12,8 +12,8 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --ignore-path .gitignore --write \"./src/**/*.+(js|ts|json)\"",
     "prettier:fix": "prettier --write src",
-    "seed": "ts-node src/database/init.ts",
-    "db:reset": "ts-node src/database/init.ts"
+    "seed": "node --loader ts-node/esm --require tsconfig-paths/register src/database/init.ts",
+    "db:reset": "node --loader ts-node/esm --require tsconfig-paths/register src/database/init.ts"
   },
   "keywords": [],
   "author": "",
