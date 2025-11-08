@@ -25,25 +25,16 @@ export interface MatchRequest {
   location?: string;
 }
 
-/**
- * Get all users from database
- */
 export async function getAllUsers(): Promise<User[]> {
   return await prisma.user.findMany();
 }
 
-/**
- * Get user by name
- */
 export async function getUserByName(name: string): Promise<User | null> {
   return await prisma.user.findUnique({
     where: { name }
   });
 }
 
-/**
- * Search users by location
- */
 export async function searchUsersByLocation(location: string): Promise<User[]> {
   return await prisma.user.findMany({
     where: {
@@ -55,9 +46,6 @@ export async function searchUsersByLocation(location: string): Promise<User[]> {
   });
 }
 
-/**
- * Search users by keyword in facts
- */
 export async function searchUsersByFact(keyword: string): Promise<User[]> {
   const allUsers = await prisma.user.findMany();
   return allUsers.filter((user) =>
@@ -67,20 +55,15 @@ export async function searchUsersByFact(keyword: string): Promise<User[]> {
   );
 }
 
-/**
- * Match user need with potential helpers - Core matching algorithm
- */
 export async function matchUserNeed(
   request: MatchRequest
 ): Promise<{ matches: MatchResult[]; requestingUser?: User }> {
   let requestingUser: User | null = null;
 
-  // Get requesting user if name provided
   if (request.userName) {
     requestingUser = await getUserByName(request.userName);
   }
 
-  // Get all potential helpers
   const allUsers = await prisma.user.findMany({
     where: request.userName
       ? {
@@ -91,19 +74,16 @@ export async function matchUserNeed(
       : undefined
   });
 
-  // Extract keywords from need
   const needKeywords = [
     ...(request.keywords || []),
     ...request.need.toLowerCase().split(' ')
   ].filter((k) => k.length > 2);
 
-  // Match and score users
   const matches = allUsers
     .map((user) => {
       let score = 0;
       const matchedFacts: string[] = [];
 
-      // Check each fact against need keywords
       user.facts.forEach((fact) => {
         const factLower = fact.toLowerCase();
         needKeywords.forEach((keyword) => {
@@ -116,7 +96,6 @@ export async function matchUserNeed(
         });
       });
 
-      // Bonus for same/nearby location
       if (
         user.location &&
         requestingUser?.location &&
@@ -127,7 +106,6 @@ export async function matchUserNeed(
         score += 2;
       }
 
-      // Bonus for location match in request
       if (
         request.location &&
         user.location &&
@@ -145,7 +123,6 @@ export async function matchUserNeed(
     .filter((match) => match.score > 0)
     .sort((a, b) => b.score - a.score);
 
-  // Convert to MatchResult format
   const matchResults: MatchResult[] = matches.map((m) => ({
     name: m.user.name,
     location: m.user.location,
@@ -160,9 +137,6 @@ export async function matchUserNeed(
   };
 }
 
-/**
- * Create new user
- */
 export async function createUser(data: {
   name: string;
   location?: string;
