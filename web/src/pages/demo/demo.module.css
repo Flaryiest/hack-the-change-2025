@@ -1,0 +1,275 @@
+.pageContainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.demoContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.form {
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  background: #fee;
+  border: 2px solid #fcc;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.error h3 {
+  color: #c00;
+  margin-bottom: 0.5rem;
+}
+
+.error p {
+  color: #600;
+}
+
+.results {
+  margin-top: 3rem;
+}
+
+.interpretation {
+  background: #f0f7ff;
+  border-left: 4px solid #667eea;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.interpretation h2 {
+  color: #667eea;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.interpretation p {
+  color: #333;
+  line-height: 1.6;
+}
+
+.matches {
+  margin-bottom: 2rem;
+}
+
+.matches h2 {
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.noMatches {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.matchList {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.matchCard {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.matchCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.matchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.matchHeader h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+.score {
+  background: #667eea;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.location {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.reason {
+  background: #fff9e6;
+  border-left: 3px solid #ffc107;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  color: #333;
+  font-style: italic;
+}
+
+.facts {
+  margin-top: 1rem;
+}
+
+.facts h4 {
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.facts ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.facts li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+}
+
+.facts li:last-child {
+  border-bottom: none;
+}
+
+.recommendations {
+  background: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.recommendations h2 {
+  color: #2e7d32;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.recommendations p {
+  color: #333;
+  line-height: 1.6;
+}
+
+.apiInfo {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e0e0e0;
+  text-align: center;
+}
+
+.apiInfo h3 {
+  color: #666;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.apiInfo p {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+.apiInfo strong {
+  color: #555;
+}

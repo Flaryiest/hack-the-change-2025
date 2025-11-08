@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://telepod.up.railway.app';
 const SERIAL_PORT = process.env.SERIAL_PORT || '/dev/ttyUSB0';
 const BAUD_RATE = parseInt(process.env.BAUD_RATE || '9600');
 
@@ -274,11 +274,18 @@ async function listPorts() {
  * Main entry point
  */
 async function main() {
+  console.log('\n================================================================');
+  console.log('   TelePod Serial Server v1.0.0');
+  console.log('================================================================\n');
+  
   // List available ports first
   await listPorts();
 
   // Initialize serial connection
   const port = initializeSerialPort();
+
+  console.log('\n[OK] Server is running and listening for commands...');
+  console.log('[INFO] Press Ctrl+C to stop the server\n');
 
   // Handle graceful shutdown
   process.on('SIGINT', () => {
@@ -286,9 +293,17 @@ async function main() {
     if (port && port.isOpen) {
       port.close();
     }
+    console.log('[OK] Server stopped');
     process.exit(0);
   });
+
+  // Keep the process alive
+  process.stdin.resume();
 }
 
 // Start the server
-main().catch(console.error);
+console.log('[INFO] Initializing TelePod Serial Server...\n');
+main().catch((error) => {
+  console.error('[ERROR] Fatal error:', error);
+  process.exit(1);
+});
