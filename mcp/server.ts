@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -10,13 +8,10 @@ import {
 import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 
-// Load environment variables
-dotenv.config({ path: "../api/.env" });
+dotenv.config({ path: "./env" });
 
-// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-// Define the tools available in this MCP server
 const TOOLS: Tool[] = [
   {
     name: "get_all_users",
