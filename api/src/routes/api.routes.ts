@@ -7,37 +7,10 @@ api.get('/test', (req, res) => {
   res.send('API is working properly');
 });
 
-// Get all users
-api.get('/users', async (req, res) => {
-  try {
-    const users = await db.getAllUsers();
-    if (users) {
-      res.status(200).json(users);
-    } else {
-      res.status(500).send('Failed to fetch users');
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal server error');
-  }
-});
+// Note: Read operations (get users, search) are handled by MCP server
+// This API focuses on write operations and authentication
 
-// Get user by name
-api.get('/users/:name', async (req, res) => {
-  try {
-    const user = await db.getUserInfo(req.params.name);
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).send('User not found');
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal server error');
-  }
-});
-
-// Update user
+// Update user - Modify user/village information
 api.put('/users/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -53,7 +26,7 @@ api.put('/users/:id', async (req, res) => {
   }
 });
 
-// Delete user
+// Delete user - Remove user/village from network
 api.delete('/users/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);

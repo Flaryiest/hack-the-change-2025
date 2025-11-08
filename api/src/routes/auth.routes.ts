@@ -1,5 +1,6 @@
 import express from 'express';
 import { signUp, login, verify, logOut } from '../middleware/auth.middle.js';
+
 const auth = express.Router();
 
 auth.get('/test', (req, res) => {
