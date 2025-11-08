@@ -1,0 +1,26 @@
+{
+  "name": "telepod-serial-server",
+  "version": "1.0.0",
+  "description": "Serial communication server for TelePod LoRa antenna",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx server.ts",
+    "watch": "tsc --watch"
+  },
+  "keywords": ["serial", "lora", "telepod", "antenna"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serialport": "^12.0.0",
+    "dotenv": "^16.4.7",
+    "axios": "^1.7.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.7.0",
+    "typescript": "^5.8.2"
+  }
+}
