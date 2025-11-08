@@ -8,9 +8,9 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  firstName String?
-  lastName  String?
-  password  String
+  id          Int      @id @default(autoincrement())
+  name        String
+  location    String?
+  coordinates String?
+  facts       String[]
 }

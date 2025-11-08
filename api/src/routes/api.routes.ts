@@ -6,4 +6,6 @@ api.get('/test', (req, res) => {
   res.send('API is working properly');
 });
 
+
+
 export default api;
