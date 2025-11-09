@@ -29,78 +29,79 @@ interface CommandResult {
 
 async function processCommand(command: string): Promise<CommandResult> {
   const trimmed = command.trim();
+  
+  // Ignore empty messages
+  if (!trimmed) {
+    return { success: true, data: null };
+  }
+  
   console.log(`\n[RX] Received: ${trimmed}`);
+
+  // Ignore echo messages (messages that start with SENT, ERROR, OK, RECV responses)
+  const firstWord = trimmed.split(':')[0].toUpperCase();
+  if (firstWord === 'SENT' || firstWord === 'ERROR' || firstWord === 'OK') {
+    console.log(`[IGNORE] Ignoring echo message`);
+    return { success: true, data: null };
+  }
 
   try {
     const parts = trimmed.split(':');
     const cmd = parts[0].toUpperCase();
 
     switch (cmd) {
-      case 'MATCH': {
-        const villageName = parts[1];
-        const query = parts.slice(2).join(':');
+      case 'RECV': {
+        // RECV:<foreign_language_message>
+        const foreignMessage = parts.slice(1).join(':');
         
-        console.log(`[MATCH] Village: ${villageName}, Query: ${query}`);
+        console.log(`[RECV] Original message: ${foreignMessage}`);
         
-        const response = await axios.post(`${API_BASE_URL}/api/match`, {
-          userName: villageName,
-          query: query,
+        // Step 1: Translate the message to English
+        console.log(`[TRANSLATE] Translating to English...`);
+        const translateResponse = await axios.post(`${API_BASE_URL}/api/translate`, {
+          text: foreignMessage,
+          targetLanguage: 'English'
+        });
+        
+        const englishMessage = translateResponse.data.translatedText;
+        console.log(`[TRANSLATE] English translation: ${englishMessage}`);
+        
+        // Step 2: Use the translated message to find matching villages
+        console.log(`[MATCH] Finding matching villages...`);
+        const matchResponse = await axios.post(`${API_BASE_URL}/api/match`, {
+          query: englishMessage,
           useAI: true
         });
         
-        return { success: true, data: response.data };
-      }
-
-      case 'SEARCH_LOC': {
-        const location = parts.slice(1).join(':');
+        const matches = matchResponse.data.matches;
+        const topMatch = matches && matches.length > 0 ? matches[0] : null;
         
-        console.log(`[SEARCH_LOC] Location: ${location}`);
-        
-        const response = await axios.get(
-          `${API_BASE_URL}/api/search/location/${encodeURIComponent(location)}`
-        );
-        
-        return { success: true, data: response.data };
-      }
-
-      case 'SEARCH_SKILL': {
-        const keyword = parts.slice(1).join(':');
-        
-        console.log(`[SEARCH_SKILL] Keyword: ${keyword}`);
-        
-        const response = await axios.get(
-          `${API_BASE_URL}/api/search/skill/${encodeURIComponent(keyword)}`
-        );
-        
-        return { success: true, data: response.data };
-      }
-
-      case 'CREATE': {
-        // CREATE:<name>:<location>:<coordinates>:<fact1>|<fact2>|<fact3>
-        const name = parts[1];
-        const location = parts[2];
-        const coordinates = parts[3];
-        const factsStr = parts[4] || '';
-        const facts = factsStr.split('|').filter(f => f.trim());
-        
-        console.log(`[CREATE] Village: ${name}`);
-        
-        const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
-          name,
-          location,
-          coordinates,
-          facts
-        });
-        
-        return { success: true, data: response.data };
-      }
-
-      case 'STATUS': {
-        console.log(`[STATUS] Checking API status`);
-        
-        const response = await axios.get(`${API_BASE_URL}/api/test`);
-        
-        return { success: true, data: response.data };
+        if (topMatch) {
+          console.log(`[MATCH] Top match found: ${topMatch.name} (Score: ${topMatch.matchScore})`);
+          
+          return {
+            success: true,
+            data: {
+              originalMessage: foreignMessage,
+              translatedMessage: englishMessage,
+              topMatch: {
+                name: topMatch.name,
+                location: topMatch.location,
+                score: topMatch.matchScore,
+                capabilities: topMatch.relevantCapabilities
+              }
+            }
+          };
+        } else {
+          console.log(`[MATCH] No matches found`);
+          return {
+            success: true,
+            data: {
+              originalMessage: foreignMessage,
+              translatedMessage: englishMessage,
+              topMatch: null
+            }
+          };
+        }
       }
 
       case 'PING': {
@@ -111,7 +112,7 @@ async function processCommand(command: string): Promise<CommandResult> {
       default:
         return { 
           success: false, 
-          error: `Unknown command: ${cmd}. Valid commands: MATCH, SEARCH_LOC, SEARCH_SKILL, CREATE, STATUS, PING` 
+          error: ` ` 
         };
     }
   } catch (error: any) {
@@ -123,29 +124,28 @@ async function processCommand(command: string): Promise<CommandResult> {
   }
 }
 
-function formatResponse(result: CommandResult): string {
+function formatResponse(result: CommandResult): string | null {
   if (result.success) {
+    // Don't respond to ignored messages
+    if (result.data === null) {
+      return null;
+    }
+    
     if (typeof result.data === 'string') {
       return `OK:${result.data}`;
     }
     
-    if (result.data?.matches) {
-      const matchCount = result.data.matchCount || 0;
-      const topMatch = result.data.matches[0];
+    // Handle RECV response with translation and match
+    if (result.data?.translatedMessage !== undefined) {
+      const topMatch = result.data.topMatch;
       
       if (topMatch) {
-        return `MATCH_FOUND:${matchCount}:${topMatch.name}:${topMatch.location}:${topMatch.matchScore}:${topMatch.relevantCapabilities.join('|')}`;
+        // Format: RECV:translated_message:match_name:match_location:score
+        return `RECV:${result.data.translatedMessage}:${topMatch.name}:${topMatch.location}:${topMatch.score.toFixed(2)}`;
+      } else {
+        // No match found
+        return `RECV:${result.data.translatedMessage}:NO_MATCH`;
       }
-      return `NO_MATCH:0`;
-    }
-    
-    if (result.data?.users) {
-      const count = result.data.count || 0;
-      if (count > 0) {
-        const firstUser = result.data.users[0];
-        return `FOUND:${count}:${firstUser.name}:${firstUser.location}`;
-      }
-      return `NOT_FOUND:0`;
     }
     
     // Generic success
@@ -169,13 +169,16 @@ function initializeSerialPort(): SerialPort | null {
       const result = await processCommand(data);
       const response = formatResponse(result);
       
-      console.log(`[TX] Sending: ${response}`);
-      
-      port.write(response + '\n', (err) => {
-        if (err) {
-          console.error('[ERROR] Write error:', err.message);
-        }
-      });
+      // Only write if there's a response (null means ignore)
+      if (response !== null) {
+        console.log(`[TX] Sending: ${response}`);
+        
+        port.write(response + '\n', (err) => {
+          if (err) {
+            console.error('[ERROR] Write error:', err.message);
+          }
+        });
+      }
     });
 
     // Handle port events
@@ -216,10 +219,8 @@ function startSimulationMode() {
 
   const testCommands = [
     'PING',
-    'STATUS',
-    'MATCH:Kolda:Need doctors and medical supplies urgently',
-    'SEARCH_LOC:Dakar Region',
-    'SEARCH_SKILL:doctors',
+    'RECV:Nous avons besoin de médecins et de fournitures médicales',
+    'RECV:J\'ai besoin d\'aide pour l\'agriculture',
   ];
 
   let index = 0;
@@ -236,7 +237,11 @@ function startSimulationMode() {
     const result = await processCommand(command);
     const response = formatResponse(result);
     
-    console.log(`[TX] Response: ${response}`);
+    if (response !== null) {
+      console.log(`[TX] Response: ${response}`);
+    } else {
+      console.log(`[TX] No response (message ignored)`);
+    }
     console.log('================================================================');
 
     index++;

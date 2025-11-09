@@ -159,3 +159,30 @@ function categorizeNeed(query: string): string | undefined {
   }
   return undefined;
 }
+
+export async function translateText(
+  text: string,
+  targetLanguage: string
+): Promise<string> {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: `You are a professional translator. Translate the provided text to ${targetLanguage}. Only return the translated text, nothing else.`
+        },
+        {
+          role: 'user',
+          content: text
+        }
+      ],
+      temperature: 0.3,
+    });
+
+    return completion.choices[0]?.message?.content || text;
+  } catch (error) {
+    console.error('Translation error:', error);
+    throw new Error('Translation failed');
+  }
+}

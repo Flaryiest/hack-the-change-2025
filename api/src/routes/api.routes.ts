@@ -113,4 +113,25 @@ api.delete('/users/:id', async (req, res) => {
   }
 });
 
+api.post('/translate', async (req, res) => {
+  try {
+    const { text, targetLanguage } = req.body;
+
+    if (!text || !targetLanguage) {
+      res.status(400).json({ error: 'Both text and targetLanguage are required' });
+      return;
+    }
+
+    const translation = await aiService.translateText(text, targetLanguage);
+    
+    res.status(200).json({
+      translatedText: translation,
+      targetLanguage
+    });
+  } catch (err) {
+    console.error('Translation error:', err);
+    res.status(500).json({ error: 'Translation failed' });
+  }
+});
+
 export default api;
