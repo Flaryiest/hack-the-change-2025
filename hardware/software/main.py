@@ -45,7 +45,7 @@ def microphone():
             if message.startswith("BUTTON:"):
                 if message.strip() == "BUTTON:PRESSED":
                     with screen_lock:
-                        current = "recording"
+                        current = "loading"
                     
                     recorded_frames = []
                     
@@ -56,6 +56,9 @@ def microphone():
                                     frames_per_buffer=CHUNK,
                                     input_device_index=1)
                     
+
+                    with screen_lock:
+                        current = "recording"
                     print("waiting for button release")
                     
                     while run:
@@ -237,23 +240,8 @@ def main():
                 image_key = "contact"
 
         if image_key in images:
-            try:
-                img = pygame.image.load(images[image_key])
-                screen.blit(img, (0, 0))
-            except pygame.error as e:
-                print(f"Could not load image {images[image_key]}: {e}")
-                if image_key in ["listening", "recording"]:
-                    screen.fill((255, 0, 0))  # Red for recording
-                elif image_key in ["tts", "response"]:
-                    screen.fill((0, 255, 0))  # Green for TTS/response
-                elif image_key in ["loading", "processing"]:
-                    screen.fill((0, 0, 255))  # Blue for loading/processing
-                elif image_key == "sent":
-                    screen.fill((255, 255, 0))  # Yellow for sent
-                elif image_key == "press":
-                    screen.fill((255, 165, 0))  # Orange for press
-                else:
-                    screen.fill((255, 255, 255))  # White default
+            img = pygame.image.load(images[image_key])
+            screen.blit(img, (0, 0))
 
         pygame.display.flip()
         
