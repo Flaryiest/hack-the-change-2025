@@ -151,7 +151,9 @@ function formatResponse(result: CommandResult): string | null {
     // Generic success
     return `OK:${JSON.stringify(result.data)}`;
   } else {
-    return `ERROR:${result.error}`;
+    // Don't send errors back to antenna - just log them
+    console.error(`[ERROR] ${result.error}`);
+    return null;
   }
 }
 
