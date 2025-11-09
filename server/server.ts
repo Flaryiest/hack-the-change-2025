@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://telepod.up.railway.app';
-const SERIAL_PORT = process.env.SERIAL_PORT || '/dev/ttyUSB0';
+const SERIAL_PORT = process.env.SERIAL_PORT || '/dev/tty.usbserial-0001';
 const BAUD_RATE = parseInt(process.env.BAUD_RATE || '9600');
 
 console.log('TelePod Serial Server Starting...');
