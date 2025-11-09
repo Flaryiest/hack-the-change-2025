@@ -44,7 +44,6 @@ def microphone():
             
             if message.startswith("BUTTON:"):
                 if message.strip() == "BUTTON:PRESSED":
-                    print("Button pressed - starting recording")
                     with screen_lock:
                         current = "recording"
                     
@@ -68,6 +67,7 @@ def microphone():
                                 release_msg = pod.read_response()
                                 if "BUTTON:RELEASED" in release_msg:
                                     print("\nButton released!")
+                                    current = "processing"
                                     break
                             
                         except Exception as e:
@@ -203,6 +203,9 @@ def main():
         "contact": "images/contact.png",
         "messages": "images/awaiting.png",
         "listening": "images/recording.png",
+        "recording": "images/recording.png",
+        "processing": "images/loading.png",
+        "response": "images/response.png",
         "tts": "images/response.png",
         "press": "images/press.png",
         "loading": "images/loading.png",
@@ -239,18 +242,18 @@ def main():
                 screen.blit(img, (0, 0))
             except pygame.error as e:
                 print(f"Could not load image {images[image_key]}: {e}")
-                if image_key == "listening":
-                    screen.fill((255, 0, 0))
-                elif image_key == "tts":
-                    screen.fill((0, 255, 0))
-                elif image_key == "loading":
-                    screen.fill((0, 0, 255))
+                if image_key in ["listening", "recording"]:
+                    screen.fill((255, 0, 0))  # Red for recording
+                elif image_key in ["tts", "response"]:
+                    screen.fill((0, 255, 0))  # Green for TTS/response
+                elif image_key in ["loading", "processing"]:
+                    screen.fill((0, 0, 255))  # Blue for loading/processing
                 elif image_key == "sent":
-                    screen.fill((255, 255, 0))
+                    screen.fill((255, 255, 0))  # Yellow for sent
                 elif image_key == "press":
-                    screen.fill((255, 165, 0))
+                    screen.fill((255, 165, 0))  # Orange for press
                 else:
-                    screen.fill((255, 255, 255))
+                    screen.fill((255, 255, 255))  # White default
 
         pygame.display.flip()
         
