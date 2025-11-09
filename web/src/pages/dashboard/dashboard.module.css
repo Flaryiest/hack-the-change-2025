@@ -1,0 +1,272 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: white;
+}
+
+.page {
+  width: 1024px;
+  max-width: 100%;
+  padding: 2rem;
+}
+
+.dashboardContainer {
+  background: white;
+  padding: 2rem 1rem;
+  margin-top: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #ddd;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 600;
+  color: rgb(43, 43, 43);
+}
+
+.logoutButton {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: black;
+  border: 2px solid black;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logoutButton:hover {
+  background: black;
+  color: white;
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: rgb(43, 43, 43);
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  color: rgb(43, 43, 43);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.value {
+  color: rgb(70, 70, 70);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  background: white;
+}
+
+.input:focus {
+  outline: none;
+  border-color: black;
+}
+
+.factsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.factItem {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: #f8f8f8;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgb(43, 43, 43);
+}
+
+.factsEdit .factsList {
+  margin-bottom: 1.5rem;
+}
+
+.removeButton {
+  padding: 0.5rem 1rem;
+  background: white;
+  color: black;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.removeButton:hover {
+  background: black;
+  color: white;
+  border-color: black;
+}
+
+.addFact {
+  display: flex;
+  gap: 1rem;
+}
+
+.addFact .input {
+  flex: 1;
+}
+
+.addButton {
+  padding: 0.75rem 1.5rem;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0px 4px 3px rgb(145, 145, 145);
+  white-space: nowrap;
+}
+
+.addButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 8px rgb(100, 100, 100);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.editButton,
+.saveButton {
+  padding: 1rem 2rem;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0px 4px 3px rgb(145, 145, 145);
+}
+
+.editButton:hover,
+.saveButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 8px rgb(100, 100, 100);
+}
+
+.cancelButton {
+  padding: 1rem 2rem;
+  background: white;
+  color: black;
+  border: 2px solid black;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background: black;
+  color: white;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: rgb(70, 70, 70);
+  font-size: 1.1rem;
+}
+
+.error {
+  background: #fee;
+  border: 2px solid #fcc;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.error h3 {
+  color: #c00;
+  margin-bottom: 0.5rem;
+}
+
+.error p {
+  color: #600;
+  margin-bottom: 1rem;
+}
+
+.errorBanner {
+  background: #fee;
+  border: 2px solid #fcc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.errorBanner p {
+  color: #c00;
+  margin: 0;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0px 4px 3px rgb(145, 145, 145);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 8px rgb(100, 100, 100);
+}

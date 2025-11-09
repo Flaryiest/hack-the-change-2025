@@ -21,15 +21,6 @@ async function getUserInfo(name: string) {
   }
 }
 
-async function getAllUsers() {
-  try {
-    return await prisma.user.findMany();
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
 async function updateUser(id: number, data: Prisma.UserUpdateInput) {
   try {
     return await prisma.user.update({
@@ -53,4 +44,4 @@ async function deleteUser(id: number) {
   }
 }
 
-export { signUp, getUserInfo, getAllUsers, updateUser, deleteUser };
+export { signUp, getUserInfo, updateUser, deleteUser };

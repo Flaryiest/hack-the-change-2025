@@ -1,5 +1,7 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import * as db from '../database/queries.js';
+import * as mcpFunctions from '../services/mcp-functions.js';
+import * as aiService from '../services/ai.service.js';
 
 const api = express.Router();
 
@@ -7,37 +9,80 @@ api.get('/test', (req, res) => {
   res.send('API is working properly');
 });
 
-// Get all users
-api.get('/users', async (req, res) => {
+api.post('/match', async (req, res) => {
   try {
-    const users = await db.getAllUsers();
-    if (users) {
-      res.status(200).json(users);
-    } else {
-      res.status(500).send('Failed to fetch users');
+    const { query, userName, useAI = true } = req.body;
+
+    if (!query) {
+      res.status(400).json({ error: 'Query is required' });
+      return;
     }
+
+    let matchResults;
+    let aiInterpretation;
+    let aiRecommendation;
+
+    if (useAI) {
+      aiInterpretation = await aiService.interpretQuery({
+        query,
+        userName
+      });
+
+      matchResults = await mcpFunctions.matchUserNeed({
+        userName,
+        need: query,
+        keywords: aiInterpretation.keywords,
+        location: aiInterpretation.location
+      });
+
+      if (matchResults.matches.length > 0) {
+        aiRecommendation = await aiService.generateMatchRecommendations(
+          query,
+          matchResults.matches
+        );
+      }
+    } else {
+      matchResults = await mcpFunctions.matchUserNeed({
+        userName,
+        need: query
+      });
+    }
+
+    res.status(200).json({
+      query,
+      userName: userName || 'Anonymous',
+      interpretation: aiInterpretation?.interpretation,
+      aiRecommendation,
+      matchCount: matchResults.matches.length,
+      matches: matchResults.matches,
+      requestingUser: matchResults.requestingUser
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal server error');
+    console.error('Match error:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Get user by name
-api.get('/users/:name', async (req, res) => {
+api.get('/search/location/:location', async (req, res) => {
   try {
-    const user = await db.getUserInfo(req.params.name);
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).send('User not found');
-    }
+    const users = await mcpFunctions.searchUsersByLocation(req.params.location);
+    res.status(200).json({ count: users.length, users });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Update user
+api.get('/search/skill/:keyword', async (req, res) => {
+  try {
+    const users = await mcpFunctions.searchUsersByFact(req.params.keyword);
+    res.status(200).json({ count: users.length, users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 api.put('/users/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -53,7 +98,6 @@ api.put('/users/:id', async (req, res) => {
   }
 });
 
-// Delete user
 api.delete('/users/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
