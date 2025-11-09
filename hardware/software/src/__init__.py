@@ -1,1 +1,1 @@
-from src.podserial import PodSerial
+from src.podserial import Pod

@@ -8,4 +8,10 @@ class Pod:
         self.ser.write((command + '\n').encode('utf-8'))
 
     def read_response(self):
-        return self.ser.readline().decode('utf-8').strip()
+        try:
+            raw_data = self.ser.readline()
+            if raw_data:
+                return raw_data.decode('utf-8', errors='ignore').strip()
+            return ""
+        except UnicodeDecodeError:
+            return ""
