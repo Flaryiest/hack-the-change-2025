@@ -13,4 +13,5 @@ model User {
   location    String?
   coordinates String?
   facts       String[]
+  response    String?
 }

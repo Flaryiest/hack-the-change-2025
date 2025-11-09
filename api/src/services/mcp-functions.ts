@@ -8,6 +8,7 @@ export interface User {
   location: string | null;
   coordinates: string | null;
   facts: string[];
+  response: string | null;
 }
 
 export interface MatchResult {
@@ -16,6 +17,7 @@ export interface MatchResult {
   coordinates: string | null;
   matchScore: number;
   relevantCapabilities: string[];
+  response: string | null;
 }
 
 export interface MatchRequest {
@@ -128,7 +130,8 @@ export async function matchUserNeed(
     location: m.user.location,
     coordinates: m.user.coordinates,
     matchScore: m.score,
-    relevantCapabilities: m.matchedFacts
+    relevantCapabilities: m.matchedFacts,
+    response: m.user.response
   }));
 
   return {

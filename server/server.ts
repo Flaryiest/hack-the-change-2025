@@ -87,7 +87,8 @@ async function processCommand(command: string): Promise<CommandResult> {
                 name: topMatch.name,
                 location: topMatch.location,
                 score: topMatch.matchScore,
-                capabilities: topMatch.relevantCapabilities
+                capabilities: topMatch.relevantCapabilities,
+                response: topMatch.response
               }
             }
           };
@@ -140,8 +141,10 @@ function formatResponse(result: CommandResult): string | null {
       const topMatch = result.data.topMatch;
       
       if (topMatch) {
-        // Format: RECV:translated_message:match_name:match_location:score
-        return `RECV:${result.data.translatedMessage}:${topMatch.name}:${topMatch.location}:${topMatch.score.toFixed(2)}`;
+        // Use the French response from the village if available, otherwise fallback to translated message
+        const responseMessage = topMatch.response || result.data.translatedMessage;
+        // Format: RECV:french_response:match_name:match_location:score
+        return `RECV:${responseMessage}:${topMatch.name}:${topMatch.location}:${topMatch.score.toFixed(2)}`;
       } else {
         // No match found
         return `RECV:${result.data.translatedMessage}:NO_MATCH`;

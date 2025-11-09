@@ -10,6 +10,7 @@ interface MatchResult {
   coordinates: string | null;
   matchScore: number;
   relevantCapabilities: string[];
+  response: string | null;
 }
 
 interface AIResponse {
@@ -154,6 +155,12 @@ export default function DemoPage() {
                         <p className={styles.location}>📍 {match.location || 'Unknown location'}</p>
                         {match.coordinates && (
                           <p className={styles.coordinates}>{match.coordinates}</p>
+                        )}
+                        {match.response && (
+                          <div className={styles.response}>
+                            <h4>Response:</h4>
+                            <p>{match.response}</p>
+                          </div>
                         )}
                         <div className={styles.facts}>
                           <h4>Relevant Capabilities:</h4>
