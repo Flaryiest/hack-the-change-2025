@@ -6,17 +6,20 @@ const API_URL = 'https://telepod.up.railway.app';
 
 interface MatchResult {
   name: string;
-  location: string;
-  facts: string[];
-  score?: number;
-  reason?: string;
+  location: string | null;
+  coordinates: string | null;
+  matchScore: number;
+  relevantCapabilities: string[];
 }
 
 interface AIResponse {
   query: string;
-  interpretation: string;
+  userName?: string;
+  interpretation?: string;
+  aiRecommendation?: string;
+  matchCount: number;
   matches: MatchResult[];
-  recommendations: string;
+  requestingUser?: any;
 }
 
 export default function DemoPage() {
@@ -39,8 +42,9 @@ export default function DemoPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          villageName,
+          userName: villageName,
           query,
+          useAI: true,
         }),
       });
 
@@ -107,6 +111,13 @@ export default function DemoPage() {
             </button>
           </form>
 
+          {loading && (
+            <div className={styles.loading}>
+              <h3>AI is analyzing your request...</h3>
+              <p>Finding the best village matches for your needs</p>
+            </div>
+          )}
+
           {error && (
             <div className={styles.error}>
               <h3>Error</h3>
@@ -114,40 +125,41 @@ export default function DemoPage() {
             </div>
           )}
 
-          {results && (
+          {results && !loading && (
             <div className={styles.results}>
-              <div className={styles.interpretation}>
-                <h2>AI Interpretation</h2>
-                <p>{results.interpretation}</p>
-              </div>
+              {results.interpretation && (
+                <div className={styles.interpretation}>
+                  <h2>AI Interpretation</h2>
+                </div>
+              )}
 
               <div className={styles.matches}>
-                <h2>Matching Villages ({results.matches.length})</h2>
+                <h2>Top 5 Matching Villages</h2>
                 {results.matches.length === 0 ? (
                   <p className={styles.noMatches}>
                     No matches found. Try a different query.
                   </p>
                 ) : (
                   <div className={styles.matchList}>
-                    {results.matches.map((match, index) => (
+                    {results.matches.slice(0, 5).map((match, index) => (
                       <div key={index} className={styles.matchCard}>
                         <div className={styles.matchHeader}>
                           <h3>{match.name}</h3>
-                          {match.score && (
+                          {match.matchScore && (
                             <span className={styles.score}>
-                              Score: {match.score.toFixed(2)}
+                              Score: {match.matchScore.toFixed(2)}
                             </span>
                           )}
                         </div>
-                        <p className={styles.location}>📍 {match.location}</p>
-                        {match.reason && (
-                          <p className={styles.reason}>{match.reason}</p>
+                        <p className={styles.location}>📍 {match.location || 'Unknown location'}</p>
+                        {match.coordinates && (
+                          <p className={styles.coordinates}>{match.coordinates}</p>
                         )}
                         <div className={styles.facts}>
-                          <h4>Resources & Facts:</h4>
+                          <h4>Relevant Capabilities:</h4>
                           <ul>
-                            {match.facts.map((fact, i) => (
-                              <li key={i}>{fact}</li>
+                            {match.relevantCapabilities.map((capability, i) => (
+                              <li key={i}>{capability}</li>
                             ))}
                           </ul>
                         </div>
@@ -157,10 +169,10 @@ export default function DemoPage() {
                 )}
               </div>
 
-              {results.recommendations && (
+              {results.aiRecommendation && (
                 <div className={styles.recommendations}>
                   <h2>AI Recommendations</h2>
-                  <p>{results.recommendations}</p>
+                  <p>{results.aiRecommendation}</p>
                 </div>
               )}
             </div>

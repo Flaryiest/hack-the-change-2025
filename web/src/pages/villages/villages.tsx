@@ -33,7 +33,7 @@ export default function VillagesPage() {
       }
 
       const data = await response.json();
-      setVillages(data);
+      setVillages(data.users || []); // Extract the users array from the response
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load villages');
     } finally {
